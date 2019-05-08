@@ -1,0 +1,74 @@
+{
+  "_args": [
+    [
+      "sawtooth-sdk-react@1.0.0",
+      "/home/merinom/Desktop/Trabajo/gsi/TFM/app/pruebaAndroid/AwesomeProject_soce2"
+    ]
+  ],
+  "_from": "sawtooth-sdk-react@1.0.0",
+  "_id": "sawtooth-sdk-react@1.0.0",
+  "_inBundle": false,
+  "_integrity": "sha512-+l/EL9+MoUCe2+Cq2vlWFX8OYOasMI1JSI7TPBusIbJ3gC8kRy+XAuNe6BarZCm0AII7D8uZIoRV1kLVm0YDVA==",
+  "_location": "/sawtooth-sdk-react",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "sawtooth-sdk-react@1.0.0",
+    "name": "sawtooth-sdk-react",
+    "escapedName": "sawtooth-sdk-react",
+    "rawSpec": "1.0.0",
+    "saveSpec": null,
+    "fetchSpec": "1.0.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/sawtooth-sdk-react/-/sawtooth-sdk-react-1.0.0.tgz",
+  "_spec": "1.0.0",
+  "_where": "/home/merinom/Desktop/Trabajo/gsi/TFM/app/pruebaAndroid/AwesomeProject_soce2",
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/leducanhdodo/sawtooth-sdk-react/issues"
+  },
+  "dependencies": {
+    "cbor": "^4.1.1",
+    "protobufjs": "^6.7.3",
+    "protocol-buffers": "^4.1.0",
+    "uuid": "^3.0.1"
+  },
+  "description": "An SDK for interacting with the Hyperledger Sawtooth distributed ledger.",
+  "devDependencies": {
+    "standard": "^8.6.0",
+    "underscore": "^1.8.3"
+  },
+  "homepage": "https://www.hyperledger.org/projects/sawtooth",
+  "keywords": [
+    "hyperledger",
+    "blockchain",
+    "signing",
+    "crypto",
+    "protobuf"
+  ],
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "name": "sawtooth-sdk-react",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leducanhdodo/sawtooth-sdk-react.git"
+  },
+  "scripts": {
+    "compile_protobuf": "node compile_protobuf.js > protobuf/protobuf_bundle.json",
+    "prepublish": "npm run compile_protobuf && npm test"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it"
+    ],
+    "ignore": [
+      "/browserify-bundles/"
+    ]
+  },
+  "version": "1.0.0"
+}
