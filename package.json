@@ -1,12 +1,13 @@
 {
-  "name": "AwesomeProject",
-  "version": "0.0.1",
+  "name": "Soce",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.4.0",
     "base-64": "^0.1.0",
     "borc": "^2.1.0",
     "cbor-js": "^0.1.0",

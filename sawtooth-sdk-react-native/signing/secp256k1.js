@@ -75,27 +75,14 @@ class Secp256k1PrivateKey extends PrivateKey {
       let privKey;
       do {
         var buf = Buffer.createBuffer(32)
-        console.log('buf', buf)
-        console.log('insatanceof', buf instanceof Buffer)
-
         var arr = Object.values(randomBytes)
         for (var i = 0; i < arr.length; ++i) {
           buf[i] = arr[i]
         }
-
-        console.log('buf', buf)
-        console.log('insatanceof', buf instanceof Buffer)
-
         privKey = buf
-
-        console.log('privKey', privKey)
-        console.log('insatanceof', privKey instanceof Buffer)
-
       } while (!secp256k1.privateKeyVerify(privKey))
-      console.log('Aqui no se lanza')
       key = new Secp256k1PrivateKey(privKey)
-    }).catch(error => console.error(error));
-    console.log('newRandom', key)
+    })
     return key;
   }
 }

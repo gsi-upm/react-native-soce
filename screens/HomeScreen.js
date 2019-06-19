@@ -18,40 +18,102 @@ export default class HomeScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state ={ isLoading: true}
+    this.state = {isLoading: true}
   }
 
   static navigationOptions = {
     title: 'Home',
   };
 
-  getUrl(){
+  getUrl(object){
+    console.log(object)
   	var sha512 = require("js-sha512");
   	var utf8 = require("utf8")
   	prefix = sha512(utf8.encode('soce')).slice(0, 6);
-
-  	name_address = sha512(utf8.encode('voter1')).slice(0, 64);
-
+  	name_address = sha512(utf8.encode("VoterUsername")).slice(0, 64);
   	url = 'http://192.168.1.40:8008' + '/state/' + String(prefix) + String(name_address)
   	return url
   }
 
-   componentDidMount(){
-    console.log(this.getUrl())
-    return fetch(this.getUrl())
+  getVotings(voter){
+    fetch(this.getUrl(voter))
       .then((response) => response.json())
       .then((responseJson) => {
-      	var base64 = require('base-64');
-      	data = base64.decode(responseJson["data"])
-      	dataArray = data.split(';')
-      	preferences = JSON.parse(dataArray[2])
-      	votings = Object.keys(preferences)
-      	dataList = []
+        console.log(voter)
+        console.log(responseJson)
+        var base64 = require('base-64');
+        data = base64.decode(responseJson["data"])
+        console.log('data', data)
+        dataArray = data.split(';')
+        preferences = JSON.parse(dataArray[2])
+        votings = Object.keys(preferences)
+        var dataList = []
+        for (i = 0, len = votings.length ; i < len; i++) {
+          var v = votings[i]
+          dataList.push(v);
+        }
+        this.setState({
+          isLoading: true,
+          data: [],
+        });
+        console.log('datalist', dataList)
+        for (j = 0, len2 = dataList.length ; j < len2; j++) {
+          fetch(this.getUrl(dataList[j]))
+          .then((response) => response.json())
+          .then((responseJson) => {
+            data = base64.decode(responseJson["data"])
+            console.log('data2', data)
+            dataArray = data.split(';')
+            console.log(22)
+            votingName = dataArray[0]
+            preferences = JSON.parse(dataArray[4])
+            console.log(33)
+            if ('VoterUsername' in preferences){
+              var vs = {'id': String(j), 'key': votingName};
+              console.log(44, vs)
+              var newData = this.state.data;
+              newData.push(vs);
+              console.log(newData)   
+              this.setState({
+                isLoading: false,
+                data: newData,
+              });
+              console.log('state', this.state)
+            }
+      })}
+  })}
 
-		for (i = 0, len = votings.length ; i < len; i++) { 
-  			v = {'id': String(i), 'key': votings[i]};
-  			dataList.push(v);
-  		}
+  getVoter = async () => {
+    return "VoterUsername"
+    //try {
+    //    const value = await AsyncStorage.getItem('VoterUsername')
+    //  if(value !== null) {
+    //    // value previously stored
+    //  }else{}
+    //} catch(e) {}
+  }
+
+  //componentDidMount(){
+  //  var voter = this.getVoter()
+  //  this.getVotings(voter)
+  //}
+
+  componentDidMount(){
+    console.log(this.getUrl("VoterUsername"))
+    return fetch(this.getUrl("VoterUsername"))
+      .then((response) => response.json())
+      .then((responseJson) => {
+        var base64 = require('base-64');
+        data = base64.decode(responseJson["data"])
+        dataArray = data.split(';')
+        preferences = JSON.parse(dataArray[2])
+        votings = Object.keys(preferences)
+        dataList = []
+
+    for (i = 0, len = votings.length ; i < len; i++) { 
+        v = {'id': String(i), 'key': votings[i]};
+        dataList.push(v);
+      }
 
         this.setState({
           isLoading: false,
@@ -66,149 +128,148 @@ export default class HomeScreen extends React.Component {
       });
   }
 
-  render() {
 
+  render() {
     if(this.state.isLoading){
       return(
-        <View style={{flex: 1, padding: 20}}>
+        <View style={{flex: 1, padding: 20, alignContent: 'center',}}>
           <ActivityIndicator/>
+          <Text>
+          Loading the votings of the voter: 'VoterUsername'
+          </Text>
         </View>
       )
     }
-
     return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
-          </View>
-
-          <View style={styles.getStartedContainer}>
-
-            <Text style={styles.getStartedText}>Get started by opening</Text>
-
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
-            </View>
-
-            <MultiSelectList
-			  data={[{id: 'a', title: 'data1'}, {id: 'b', title: 'data2'}]}
-			  renderItem={({item}) => <Text>{item.key}</Text>}
-			/>
-
-			<MultiSelectList
-			  data={this.state.data} navigation={this.props.navigation}
-			  renderItem={({item}) => <Text>{item.key}</Text>}
-			/>
-
-            <Text style={styles.getStartedText}>
-              Change this text hola and your app will automatically reload.
-            </Text>
-          </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
+      <View style={styles.Container}>
+        
+        <View style={styles.Container} contentContainerStyle={styles.ContentContainer}>
+          
+          <View style={styles.ButtonsContainer}> 
+            <TouchableOpacity style={styles.TouchableButtonReloadStyle} onPress={() => this.getVotings()} activeOpacity={0.5}>
+              <Image source={require('./img/reload.png')}
+              style={styles.ImageIconStyleReload}/>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.TouchableButtonProfileStyle} activeOpacity={0.5}>
+              <Image source={require('./img/profile.png')}
+              style={styles.ImageIconStyleProfile}/>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+          
+          <View style={styles.GetStartedContainer}>
+            <Text style={styles.GetStartedText}>
+              Select a voting to know its status and to define preferences 
+            </Text>
+            <View style={{height: 25}}>
+            </View>
+            <MultiSelectList
+            data={this.state.data} navigation={this.props.navigation}
+  			    renderItem={({item}) => <Text style={{width:1000}}>{item.key}</Text>}
+  			    />
+          </View>
 
-        <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
+        </View>
 
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
+        <View style={styles.AckContainer}>
+          <View style={{borderBottomColor: 'grey', borderBottomWidth: 0.5,}}/>
+          <View style={styles.AckImagesContainer}>
+            <Image source={require('./img/upm.png')} style={styles.ImageStyleUPM}/>
+            <Image source={require('./img/dit.png')} style={styles.ImageStyleDIT}/>
+            <Image source={require('./img/gsi.png')} style={styles.ImageStyleGSI}/>
           </View>
         </View>
+      
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  Container: {
     flex: 1,
     backgroundColor: '#fff',
+    height: 500
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
+  ButtonsContainer: {
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    paddingTop: 30,
+    paddingHorizontal: 30,
+  },
+  GetStartedContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 50,
+  },
+  GetStartedText: {
+    fontSize: 15,
+    color: 'rgba(96,100,109, 1)',
     textAlign: 'center',
-  },
-  contentContainer: {
     paddingTop: 30,
   },
-  welcomeContainer: {
+  TouchableButtonReloadStyle: {
+    paddingRight: 2,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    backgroundColor: '#e0e0e0',
+    borderWidth: 1,
+    borderColor: '#fff',
+    height: 45,
+    width: 45,
+    borderRadius: 7,
+    margin: 0,
   },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
+  TouchableButtonProfileStyle: {
+    marginLeft: 10,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 50,
+    backgroundColor: '#e0e0e0',
+    borderWidth: 1,
+    borderColor: '#fff',
+    height: 45,
+    width: 45,
+    borderRadius: 7,
+    margin: 0,
   },
-  homeScreenFilename: {
-    marginVertical: 7,
+  ImageIconStyleReload: {
+    padding: 0,
+    margin: -9,
+    height: 45,
+    width: 60,
   },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
+  ImageIconStyleProfile: {
+    padding: 0,
+    margin: 7,
+    height: 30,
+    width: 30,
   },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
+  AckImagesContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    paddingHorizontal: 10,
   },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
+  AckContainer: {
+    height: 50,
+    flex: 1,
+    justifyContent: 'flex-end',
   },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
+  ImageStyleUPM: {
+    margin: 7,
+    height: 40,
+    width: 40,
   },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
+  ImageStyleGSI: {
+    margin: 7,
+    height: 35,
+    width: 38,
   },
-  navigationFilename: {
-    marginTop: 5,
+  ImageStyleDIT: {
+    margin: 6,
+    height: 40,
+    width: 40,
   },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+
 });

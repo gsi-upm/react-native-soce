@@ -21,39 +21,28 @@ class MyListItem extends React.PureComponent {
   render() {
     const textColor = this.props.selected ? 'red' : 'black';
     return (
-      <TouchableOpacity onPress={this._onPress}  style={styles.button}>
-        <View style={{flex: 1, flexDirection: 'row'}}>
-          <Text style={{color: 'black'}}>{this.props.title}</Text>
-        <Image style={styles.image} source={require('../img/arrow2.png')} />
+      <TouchableOpacity onPress={this._onPress}  style={styles.TouchableButtonVoting}>
+        <View style={styles.ViewButtonVoting}>
+          <Text style={styles.TextButtonVoting}>{this.props.title}</Text>
+        <Image style={styles.ImageButtonVoting} source={require('../img/arrow1.png')} />
         </View>
-
       </TouchableOpacity>
       );
   }
 }
+
 class MultiSelectList extends React.PureComponent {
   state = {selected: (new Map(): Map<string, boolean>)};
-
   _keyExtractor = (item, index) => item.id;
-
   storeData = async (id: string) => {
     try {
-      
       await AsyncStorage.setItem('voting', id)
-    } catch (error) {
-  }
+    } catch (error) {}
   }
 
-  _onPressItem = (title: string) => {
-    // updater functions are preferred for transactional updates
-    //this.setState((state) => {
-      // copy the map rather than modifying state.
-      //const selected = new Map(state.selected);
-      //selected.set(id, !selected.get(id)); // toggle
-      //return {selected};
-
-    //this.storeData(id);
-    this.props.navigation.navigate('Voting', {voting: title});
+  _onPressItem = (title) => {
+    this.props.navigation.navigate('Voting', 
+      {voting: title});
   }
 
   _renderItem = ({item}) => (
@@ -77,16 +66,39 @@ class MultiSelectList extends React.PureComponent {
   }
 }
 
+
+
 const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#e1f5fe',
-    padding: 20
+
+  TouchableButtonVoting: {
+    backgroundColor: '#C5E4E8',
+    borderWidth: 0.5,
+    borderColor: '#C5E8D9',
+    height: 35,
+    width: 250,
+    borderRadius: 7,
+    marginBottom: 5,
   },
-  image: {
-    width: 13, 
-    height: 13
-  }
-})
+  ViewButtonVoting: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+  },
+  TextButtonVoting: {
+    color: 'black',
+    marginLeft: 55,
+    width: 120,
+    height: 70,
+    fontSize: 18,
+    marginTop: 4,
+  },
+  ImageButtonVoting: {
+    marginTop: 10,
+    marginRight: 10,
+    width: 15, 
+    height: 15,
+  },
+});
 
 export default MultiSelectList;
